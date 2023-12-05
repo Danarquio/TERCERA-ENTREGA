@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { messageModel } from "../DAO/models/messages.model.js";
+import { transporter } from "../config/nodemailer.js";
 
 const router = Router()
 
@@ -42,6 +43,30 @@ router.delete("/:id_msg", async(req,res)=>{
     res.send({ result: "success", payload:result})
 })
 
+
+//nodemailer-----------------------
+router.post("/mailer", async (req,res) =>{
+    const {correo, mensaje, destinatario, asunto} = req.body
+
+    const mailoption ={
+        from:"pedrodaniel.diaz@gmail.com",
+        to: destinatario,
+        subject:asunto,
+        text: `Mensaje: ${mensaje} `
+    }
+
+    transporter.sendMail(mailoption, (error, info)=>{
+        if(error){
+            console.log(error)
+            res.send("Error al enviar correo")
+        }else{
+            console.log("Correo enviado")
+            res.send("Correo enviado con exito")
+        }
+    })
+
+
+})
 
 export default router
 

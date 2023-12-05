@@ -1,7 +1,9 @@
 import fs from 'fs';
+import __dirname from '../../utils.js';
 import path from 'path';
 
-const usersFilePath = path.join(__dirname, '../models/users/users.json');
+const usersFilePath = path.join(__dirname, '../models/users.json');
+
 
 class UserDao {
   static getAllUsers() {

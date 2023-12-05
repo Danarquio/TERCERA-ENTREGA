@@ -3,7 +3,7 @@ const router = Router()
 
 import ProductManager from "../controllers/ProductManager.js"
 import CartManager from "../controllers/CartManager.js"
-import { isAdmin } from "./product.routes.js";
+import { isAdmin } from "../config/middlewares.js";
 
 const product = new ProductManager
 const cart = new CartManager

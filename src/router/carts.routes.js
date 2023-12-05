@@ -1,8 +1,14 @@
 import { Router } from "express";
 import CartManager from "../controllers/CartManager.js";
+import { isAuthenticated } from '../config/middlewares.js';
+import CartRepository from "../repositories/CartRepository.js";
+import CartController from "../controllers/CartController.js";
+import passport from "../config/middlewares.js";
 
 const router = Router()
 const cartManager = new CartManager()
+const cartRepository = new CartRepository();
+const cartController = new CartController()
 
 
 //GESTION DE CARRITO
@@ -129,5 +135,45 @@ router.get("/population/:cid", async (req,res)=>{
 })
 
 
+
+router.post("/create-cart", isAuthenticated, async (req, res) => {
+  try {
+    // Obtener el ID del usuario logueado desde la sesión
+    const userId = req.user._id; // Asumiendo que puedes obtener el ID del usuario de la sesión
+
+    // Lógica para crear un carrito asociado al usuario
+    const result = await cartRepository.createCartForUser(userId);
+
+    res.status(200).json({ status: "success", message: "Nuevo carrito creado", cart: result });
+  } catch (error) {
+    console.error("Error al crear el carrito:", error);
+    res.status(500).json({ status: "error", message: "Error al crear el carrito" });
+  }
+});
+
+
+router.post("/add-to-cart/:productId", isAuthenticated, async (req, res) => {
+  try {
+    const userId = req.user._id; // Obtener el ID del usuario logueado desde la sesión
+    const productId = req.params.productId; // Obtener el ID del producto a agregar
+
+    // Asumiendo que la cantidad del producto a agregar viene en el body de la solicitud
+    const { quantity } = req.body;
+
+    // Lógica para agregar el producto al carrito del usuario
+    const result = await cartRepository.addProductToUserCart(userId, productId, quantity);
+
+    res.status(200).json({ status: "success", message: "Producto agregado al carrito", cart: result });
+  } catch (error) {
+    console.error("Error al agregar el producto al carrito:", error);
+    res.status(500).json({ status: "error", message: "Error al agregar el producto al carrito" });
+  }
+});
+
+router.delete("/api/deleteproductcarts/:cid", cartController.deleteAllProductsInCart); // borrar todos los productos del un carrito
+
+
+router.get("/api/carts/:cid/purchase", passport.authenticate('current', { session: false }), isAuthenticated, cartController.purchaseProducts); 
+// realizar la compra total de los productos del carrito
 
 export default router;

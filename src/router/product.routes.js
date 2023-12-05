@@ -1,21 +1,12 @@
 import { Router } from "express";
 import { productsModel } from "../DAO/models/products.model.js";
 import ProductManager  from "../controllers/ProductManager.js"
-import ProductController from "../controllers/ProductController.js";
+import ProductController from '../controllers/ProductController.js';
+import { isAdmin } from '../config/middlewares.js';
+import { manejarError } from "../config/errores.js";
 const router = Router()
 const productManager = new ProductManager()
 
-
-
-//middleware para verificar si usuario es admin
-export const isAdmin = (req, res, next) => {
-    if (req.isAuthenticated() && req.user.rol === 'admin') {
-        req.isAdmin = true; // Establecer el indicador isAdmin en true si el usuario es admin
-    } else {
-      req.isAdmin = false; // Establecer el indicador isAdmin en false si el usuario no es admin
-    }
-    next();
-  };
 
 
   //Carga de productos desde el front
@@ -29,8 +20,8 @@ router.get("/", async (req, res) => {
       const products = await productManager.getProducts();
       res.send({ result: "success", payload: products });
     } catch (error) {
-      console.log(error);
-      res.status(500).send({ status: "error", error: "Error al obtener productos" });
+        const mensajeError = manejarError('ERROR_OBTENER_PRODUCTOS');
+        res.status(500).json({ status: "error", error: mensajeError });
     }
   });
   
@@ -39,46 +30,20 @@ router.get("/:id", async (req, res) => {
     try {
       const prodId = req.params.id;
       const productDetails = await productManager.getProductById(prodId);
-      res.send({ product: productDetails });
+  
+      if (productDetails) {
+        res.send({ product: productDetails });
+      } else {
+        const mensajeError = manejarError('PRODUCTO_NO_ENCONTRADO');
+        res.status(404).json({ error: mensajeError });
+      }
     } catch (error) {
       console.error('Error al obtener el producto:', error);
-      res.status(500).json({ error: 'Error al obtener el producto' });
+      const mensajeError = manejarError('ERROR_OBTENER_PRODUCTO');
+      res.status(500).json({ error: mensajeError });
     }
   });
 
-//post
-/* router.post("/" , async(req,res)=> {
-    let{title,
-        description,
-        price,
-        stock,
-        category,
-        thumbnails,
-        carru1,
-        carru2,
-        carru3,
-        minimo,
-        availability
-    }= req.body
-
-    if(!title || !description || !price || !stock || !category ||!thumbnails || !carru1 || !carru2 || !carru3 || !minimo || !availability){
-        res.send({status: "error", error: "Faltan datos"})
-    }
-    let result = await productsModel.create({
-        title,
-        description,
-        price,
-        stock,
-        category,
-        thumbnails,
-        carru1,
-        carru2,
-        carru3,
-        minimo,
-        availability
-    })
-    res.send({result: "success", payload: result})
-}) */
 
 //put
 router.put("/:id_products", async(req,res)=> {

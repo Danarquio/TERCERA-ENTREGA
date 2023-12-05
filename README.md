@@ -1,8 +1,10 @@
-# Desafio 
+# TERCERA ENTREGA
 ## Servidor Express con Node, Handlebars y persistencia de datos en MongoDB con login de usuario incorporado
 Este proyecto es una aplicación en Node.js que gestiona productos y carritos de compras. Permite agregar, actualizar, eliminar y consultar productos y carritos de compra. Además, utiliza Handlebars para renderizar las vistas tanto de la lista de productos y detalle del producto como el carrito con los productos agregados. Para poder acceder a las funcionalidades de ver y gestionar productos, debes pasar un login de usuario, registrarte primeramente y luego validar los datos al ingresar, el proceso de registro hace que el usuario se guarde en nuestra base de datos en MongoDb de manera codificada con la constraseña encriptada.
 
-En esta ultima actualizacion, modificamos la distribucion de los archivos, carpetas y funciones para cumplir con los parametros de arquitectura por capas utilizando DAO, router y controller. Se agrega tambien un archivo .env donde se encuentran las credenciales para acceder a la base de datos, tambien se separo la logica de acceso al session y a la db ubicado ahora en la carpeta config.
+En la anterior actualizacion, modificamos la distribucion de los archivos, carpetas y funciones para cumplir con los parametros de arquitectura por capas utilizando DAO, router y controller. Se agrega tambien un archivo .env donde se encuentran las credenciales para acceder a la base de datos, tambien se separo la logica de acceso al session y a la db ubicado ahora en la carpeta config.
+
+Ahora en esta nueva implementacion, agregamos la funcion de mostrar secciones de la aplicacion, identificando al usuario logueado. Impidiendo por ejemplo que otro usuario que no sea admin pueda cargar un producto, o que un usuario no logueado pueda enviar un mensaje.
 
 ## Instalación
 
@@ -19,8 +21,8 @@ En esta ultima actualizacion, modificamos la distribucion de los archivos, carpe
     npm i express
     npm i express-handlebars
     npm i mongodb
-    npm i Mongoose
-    npm i Nodemon
+    npm i mongoose
+    npm i nodemon
     npm i cookie-parser
     npm i express-session
     npm i session-file-store
@@ -31,6 +33,8 @@ En esta ultima actualizacion, modificamos la distribucion de los archivos, carpe
     npm i passport-github2
     npm i jsonwebtoken
     npm i dotenv
+    npm i chance
+    npm i uuid
 ```
 4. Crea un archivo en la raiz del proyecto llamado .env y agrega tus credenciales para acceder a la base de datos MongoDB siguiendo el esquema presentado debajo y modificando los siguientes segmentos "TU-NOMBRE-DE-USUARIO","TU-PASSWORD", "TU CONTRASEÑA" :
 
@@ -103,6 +107,7 @@ La aplicación estará disponible en:
 
 - GET `/api/carts`: Obtiene la lista de carritos
 - GET `/api/carts/:id`: Obtiene un carrito por su ID.
+- POST `/api/carts`: Crea un nuevo carrito.
 - DELETE `/api/carts/:id`: Elimina carrito por su ID.
 
 
@@ -112,19 +117,30 @@ La aplicación estará disponible en:
 - POST `/api/carts`: Agrega un nuevo carrito.
 ```json
 {
-    "description": "Hola soy un carrito",
-    "quantity": 20,
-    "total": 50000
+  "products": []
 }
 ```
 
 - Los valores necesarios para poder agregar un producto a un carrito existente: ` product_id, quantity`
 
-- POST `/api/carts/:cid/products/:pid`: Agrega un producto a un carrito.
+- POST `/api/carts/:cid/purchase`: Agrega un producto a un carrito.
 ```json
 {
-    "product_id": "id del producto",
-    "quantity": 20,
+    "cartId": "ID_DEL_CARRITO",
+  "products": [
+    {
+      "productId": "ID_DEL_PRODUCTO_1",
+      "quantity": 2
+    },
+    {
+      "productId": "ID_DEL_PRODUCTO_2",
+      "quantity": 1
+    },
+    {
+      "productId": "ID_DEL_PRODUCTO_3",
+      "quantity": 3
+    }
+  ]
 }
 ```
 - DELETE `/api/carts/:cid/products/:id`: Elimina un producto del carrito por su ID.
@@ -211,18 +227,19 @@ Arquitectura/
 
 ## Tecnologías Utilizadas
 
-- Node.js
-- Express.js
-- MongoDB 
-- Handlebars 
-- Mongoose
-- cookie-parser
-- express-session
-- session-file-store
-- connect-mongo
-- bcrypt
-- passport
-- dotenv
+- Node.js: Entorno de ejecución de JavaScript del lado del servidor.
+- Express.js: Framework web para Node.js que permite construir aplicaciones web rápidas y robustas.
+- MongoDB: Base de datos NoSQL flexible y escalable.
+- Handlebars: Motor de plantillas para generar vistas dinámicas en el servidor.
+- Mongoose: Biblioteca de modelado de objetos MongoDB para Node.js.
+- cookie-parser: Middleware para analizar cookies en las solicitudes.
+- express-session: Middleware para la gestión de sesiones en Express.js.
+- session-file-store: Almacenamiento de sesiones basado en archivos para Express.js.
+- connect-mongo: Implementación de MongoDB para el almacenamiento de sesiones en Express.js.
+- bcrypt: Biblioteca para el hashing de contraseñas.
+- passport: Middleware de autenticación para Node.js.
+- dotenv: Módulo que carga variables de entorno desde un archivo .env.
+- uuid: Librería para la generación de identificadores únicos universales (UUID). Se utiliza para crear identificadores únicos basados en estándares y métodos de generación de UUID.
 
 
 

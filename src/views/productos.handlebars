@@ -4,6 +4,7 @@
 <a href="/profile"><h3>Ir a tu perfil de usuario</h3></a>
 <a href="/cart/6519628deea059c6ae6e8e6d"><h3>Ir al Carrito</h3></a>
 <a href="/"><h3>Volver al inicio</h3></a>
+<a href="/mockingproducts">Ir a Mocking de Productos ficticios</a>
 
 <h1>Productos</h1>
 <div class="shop">
@@ -36,32 +37,3 @@
 </div>
 
 
-<script>
-    // Añade un evento click al botón "Agregar al carrito"
-    const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
-    addToCartButtons.forEach(button => {
-        button.addEventListener('click', async (event) => {
-            const productId = event.target.dataset.productId;
-
-            try {
-                const response = await fetch(`/api/carts/:cartId/products/${productId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ product_id: productId, quantity: 1 }), // Cambia aquí la cantidad si es dinámica
-                });
-
-                if (response.ok) {
-                    alert('Producto agregado al carrito');
-                    // Puedes realizar acciones adicionales después de agregar al carrito si es necesario
-                } else {
-                    throw new Error('No se pudo agregar el producto al carrito');
-                }
-            } catch (error) {
-                console.error('Error al agregar producto al carrito:', error);
-                // Maneja el error según sea necesario
-            }
-        });
-    });
-</script>
