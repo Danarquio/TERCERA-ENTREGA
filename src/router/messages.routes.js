@@ -1,6 +1,10 @@
 import { Router } from "express";
 import { messageModel } from "../DAO/models/messages.model.js";
 import { transporter } from "../config/nodemailer.js";
+import { client } from "../config/twilio.js";
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const router = Router()
 
@@ -67,6 +71,24 @@ router.post("/mailer", async (req,res) =>{
 
 
 })
+
+
+// Twilio
+router.post("/twilio", async (req, res) => {
+    try {
+        const { 'desti-num': destinationNumber, 'sms-text': smsMessage } = req.body;
+
+        let result = await client.messages.create({
+            body: smsMessage,
+            from: process.env.TWILIO_SMS_NUMBER,
+            to: destinationNumber
+        });
+
+        res.send({ status: "Success", result: "Mensaje enviado" });
+    } catch (error) {
+        res.status(500).send({ status: "Error", error: error.message || "Error al enviar el mensaje" });
+    }
+});
 
 export default router
 

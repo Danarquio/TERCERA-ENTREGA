@@ -164,11 +164,15 @@ La aplicación estará disponible en:
 
 ## Estructura del Proyecto
 ```
-Arquitectura/
+Tercera Entrega/
 ├── src/
 │   ├── config/
 │   │   ├── db.js
+│   │   ├── errores.js
+│   │   ├── middlewares.js
+│   │   ├── nodemailer.js
 │   │   ├── session.js
+│   │   ├── twilio.js
 │   │   └── passport.config.js
 │   ├── controllers/
 │   │   ├── Cartcontroller.js
@@ -176,19 +180,18 @@ Arquitectura/
 │   │   ├── Usercontroller.js
 │   │   ├── CartManager.js
 │   │   ├── multer.js
-│   │   ├── ProductManager.js
-│   │   └── UserManager.js
+│   │   └── ProductManager.js
 │   ├── DAO/
-│   │   ├── CartDao.json
-│   │   ├── ProductDao.json
-│   │   └── UserDao.js
-│   ├── models/
-│   │   ├── carts.json
-│   │   ├── carts.model.js
-│   │   ├── messages.model.js
-│   │   ├── products.json
-│   │   ├── pproducts.model.js
-│   │   └── users.model.js
+│   │   ├── classes/
+│   │   │   ├── CartDao.js
+│   │   │   ├── ProductDao.js
+│   │   │   └── UserDao.js
+│   │   ├── models/
+│   │   │   ├── CartModel.js
+│   │   │   ├── MessageModel.js
+│   │   │   ├── ProductModel.js
+│   │   │   ├── TicketModel.js
+│   │   │   └── UserModel.js
 │   ├── public/
 │   │   ├── css/
 │   │   ├── js/
@@ -200,17 +203,21 @@ Arquitectura/
 │   │   ├── upload.routes.js
 │   │   ├── user.routes.js
 │   │   └── views.routes.js
-│   ├── services/
-│   │   ├── CartService.json
-│   │   ├── ProductService.json
-│   │   └── UserService.js
+│   ├── repositories/
+│   │   ├── CartRepository.json
+│   │   ├── ProductRepository.json
+│   │   └── UserRepository.js
 │   ├── views/
+│   │   ├──layaouts/
+│   │   ├── addProduct.handlebars
 │   │   ├── cart.handlebars
 │   │   ├── chat.handlebars
 │   │   ├── detail.handlebars
+│   │   ├── faker.handlebars
 │   │   ├── home.handlebars
 │   │   ├── login.handlebars
 │   │   ├── productos.handlebars
+│   │   ├── productAdded.handlebars
 │   │   ├── profile.handlebars
 │   │   └── register.handlebars
 │   ├── app.js
