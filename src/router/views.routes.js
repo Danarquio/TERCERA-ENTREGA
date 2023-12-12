@@ -4,9 +4,22 @@ const router = Router()
 import ProductManager from "../controllers/ProductManager.js"
 import CartManager from "../controllers/CartManager.js"
 import { isAdmin } from "../config/middlewares.js";
+import logger from "../config/logger.js";
 
 const product = new ProductManager
 const cart = new CartManager
+
+// Probar loggers
+router.get('/loggerTest', (req, res) => {
+    logger.debug('Test Debug');
+    logger.info('Test Info');
+    logger.warn('Test Warning');
+    logger.error('Test Error');
+    res.send('Logging test ejecutado. Revisa los logs.');
+  });
+
+
+
 
 //Pagina inicial
 router.get("/", (req, res)=> {
@@ -70,7 +83,7 @@ router.get("/products/:id", async (req, res) => {
             res.status(404).json({ error: 'Producto no encontrado' });
         }
     } catch (error) {
-        console.error('Error al obtener el producto:', error);
+        logger.error('Error al obtener el producto:', error);
         res.status(500).json({ error: 'Error al obtener el producto' });
     }
 });

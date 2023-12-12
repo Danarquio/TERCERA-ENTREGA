@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import passport from 'passport';
 import * as userController from '../controllers/UserController.js';
+import logger from '../config/logger.js';
 
 const router = Router()
 
@@ -18,7 +19,7 @@ router.post('/register', passport.authenticate('register', { failureRedirect: '/
 });
 
 router.get("/failregister",async(req,res)=>{
-    console.log("Fallo el registro")
+  logger.info("Fallo el registro")
     res.send({error: "Failed"})
 })
 

@@ -4,6 +4,7 @@ import { isAuthenticated } from '../config/middlewares.js';
 import CartRepository from "../repositories/CartRepository.js";
 import CartController from "../controllers/CartController.js";
 import passport from "../config/middlewares.js";
+import logger from "../config/logger.js";
 
 const router = Router()
 const cartManager = new CartManager()
@@ -18,7 +19,7 @@ router.get("/", async (req, res) => {
       const carts = await cartManager.getAllCarts();
       res.send({ result: "success", payload: carts });
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       res.status(500).send({ status: "error", error: "Error al obtener carritos" });
     }
   });
@@ -29,7 +30,7 @@ router.post("/", async (req, res) => {
       const result = await cartManager.addCart();
       res.send({ result: "success", payload: result });
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       res.status(500).send({ status: "error", error: "Error al crear carrito" });
     }
   });
@@ -42,7 +43,7 @@ router.put("/:id", async (req, res) => {
       const result = await cartManager.updateCart(id, updatedCart);
       res.send({ result: "success", payload: result });
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       res.status(500).send({ status: "error", error: "Error al actualizar carrito" });
     }
   });
@@ -54,7 +55,7 @@ router.delete("/:id", async (req, res) => {
       const result = await cartManager.deleteCart(id);
       res.send({ result: "success", payload: result });
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       res.status(500).send({ status: "error", error: "Error al eliminar carrito" });
     }
   });
@@ -73,7 +74,7 @@ router.get("/:cid/products/:pid", async (req, res) => {
   
       res.send({ result: "success", payload: result });
     } catch (error) {
-      console.error("Error al verificar el producto en el carrito:", error);
+      logger.error("Error al verificar el producto en el carrito:", error);
       res.status(500).send({ status: "error", error: "Error al verificar el producto en el carrito" });
     }
   });
@@ -89,7 +90,7 @@ router.post("/:cid/products/:pid", async (req, res) => {
 
         res.send({ result: "success", payload: result });
     } catch (error) {
-        console.error("Error al agregar productos al carrito:", error);
+        logger.error("Error al agregar productos al carrito:", error);
         res.status(500).send({ status: "error", error: "Error al agregar productos al carrito" });
     }
 });
@@ -105,7 +106,7 @@ router.put("/:cid/products/:pid", async (req, res) => {
 
         res.send({ result: "success", payload: result });
     } catch (error) {
-        console.error("Error al modificar productos en el carrito:", error);
+        logger.error("Error al modificar productos en el carrito:", error);
         res.status(500).send({ status: "error", error: "Error al modificar productos en el carrito" });
     }
 });
@@ -120,7 +121,7 @@ router.delete("/:cid/products/:pid", async (req, res) => {
 
         res.send({ result: "success", payload: result });
     } catch (error) {
-        console.error("Error al eliminar productos del carrito:", error);
+        logger.error("Error al eliminar productos del carrito:", error);
         res.status(500).send({ status: "error", error: "Error al eliminar productos del carrito" });
     }
 });
@@ -146,7 +147,7 @@ router.post("/create-cart", isAuthenticated, async (req, res) => {
 
     res.status(200).json({ status: "success", message: "Nuevo carrito creado", cart: result });
   } catch (error) {
-    console.error("Error al crear el carrito:", error);
+    logger.error("Error al crear el carrito:", error);
     res.status(500).json({ status: "error", message: "Error al crear el carrito" });
   }
 });
@@ -165,7 +166,7 @@ router.post("/add-to-cart/:productId", isAuthenticated, async (req, res) => {
 
     res.status(200).json({ status: "success", message: "Producto agregado al carrito", cart: result });
   } catch (error) {
-    console.error("Error al agregar el producto al carrito:", error);
+    logger.error("Error al agregar el producto al carrito:", error);
     res.status(500).json({ status: "error", message: "Error al agregar el producto al carrito" });
   }
 });

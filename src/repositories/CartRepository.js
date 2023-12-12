@@ -1,5 +1,6 @@
 import { cartsModel } from '../DAO/models/carts.model.js';
 import CartDao from '../DAO/classes/CartDao.js';
+import logger from '../config/logger.js';
 
 const cartDao= new CartDao()
 
@@ -71,7 +72,7 @@ class CartRepository {
         const result = await this.dao.deleteAllProductsInCart(cartId);
         return result;
     } catch (error) {
-        console.error(error);
+      logger.error(error);
         throw new Error("Error al eliminar todos los productos del carrito");
     }
 }

@@ -4,6 +4,7 @@ import ProductManager  from "../controllers/ProductManager.js"
 import ProductController from '../controllers/ProductController.js';
 import { isAdmin } from '../config/middlewares.js';
 import { manejarError } from "../config/errores.js";
+import logger from "../config/logger.js";
 const router = Router()
 const productManager = new ProductManager()
 
@@ -38,7 +39,7 @@ router.get("/:id", async (req, res) => {
         res.status(404).json({ error: mensajeError });
       }
     } catch (error) {
-      console.error('Error al obtener el producto:', error);
+      logger.error('Error al obtener el producto:', error);
       const mensajeError = manejarError('ERROR_OBTENER_PRODUCTO');
       res.status(500).json({ error: mensajeError });
     }

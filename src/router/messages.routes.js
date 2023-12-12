@@ -3,6 +3,7 @@ import { messageModel } from "../DAO/models/messages.model.js";
 import { transporter } from "../config/nodemailer.js";
 import { client } from "../config/twilio.js";
 import dotenv from 'dotenv'
+import logger from "../config/logger.js";
 
 dotenv.config()
 
@@ -14,7 +15,7 @@ router.get("/", async(req,res)=> {
         let  message= await messageModel.find()
         res.send({result : "success", payload:  message})
     } catch(error){
-        console.log(error)
+        logger.error(error)
     }
 })
 
@@ -61,10 +62,10 @@ router.post("/mailer", async (req,res) =>{
 
     transporter.sendMail(mailoption, (error, info)=>{
         if(error){
-            console.log(error)
+            logger.info(error)
             res.send("Error al enviar correo")
         }else{
-            console.log("Correo enviado")
+            logger.info("Correo enviado")
             res.send("Correo enviado con exito")
         }
     })
