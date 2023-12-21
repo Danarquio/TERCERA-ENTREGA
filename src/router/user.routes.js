@@ -110,4 +110,9 @@ router.get('/current', async (req, res, next) => {
 router.get('/users', userController.getUsers);
 router.get('/users/:uid', userController.getUserById);
 
+//restablecer contraseña
+router.post('/request-password-reset', UserController.requestPasswordReset);
+router.post('/reset-password/:token', UserController.resetPassword);
+router.post('/change-role/:userId', UserController.changeUserRole);
+
 export default router;
