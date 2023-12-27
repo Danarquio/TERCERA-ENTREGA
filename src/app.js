@@ -14,12 +14,22 @@ import userRouter from './router/user.routes.js';
 import messagesRouter from "./router/messages.routes.js"
 import Chance from 'chance';
 
+import Handlebars from 'handlebars';
+import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access';
+
 // Configuración de .env
 import dotenv from 'dotenv';
 dotenv.config();
 
 // Inicializar la aplicación de Express
 const app = express();
+
+// Define tus helpers personalizados
+const customHandlebarsHelpers = {
+  eq: (v1, v2) => v1 === v2,
+  or: (v1, v2) => v1 || v2,
+  // Puedes añadir más helpers aquí si es necesario
+};
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
@@ -42,8 +52,12 @@ app.use("/api/carts", cartsRouter)
 app.use("/api/prod", productsRouter)
 app.use("/api/user", userRouter)
 app.use("/api/msg", messagesRouter)
+
 //handlebars
-app.engine("handlebars", engine())
+app.engine('handlebars', engine({
+  handlebars: allowInsecurePrototypeAccess(Handlebars),
+  helpers: customHandlebarsHelpers
+}));
 app.set("view engine", "handlebars")
 app.set("views", path.resolve(__dirname + "/views"))
 app.set("views", __dirname+"/views")

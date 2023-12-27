@@ -13,7 +13,8 @@ const productsSchema = new mongoose.Schema({
     carru2: { type: String, required: true },
     carru3: { type: String, required: true },
     minimo: { type: Number, required: true },
-    availability: {type: Boolean,required: true}
+    availability: {type: Boolean,required: true},
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null } // Referencia al modelo de Usuario
 });
 
 

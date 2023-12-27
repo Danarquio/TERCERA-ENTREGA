@@ -1,4 +1,6 @@
 import ProductRepository from '../repositories/ProductRepository.js';
+import { productsModel } from '../DAO/models/products.model.js';
+
 
 class ProductManager {
   constructor() {
@@ -48,6 +50,10 @@ class ProductManager {
       console.error('Error al eliminar el producto:', error);
       throw new Error('Error al eliminar el producto');
     }
+  }
+
+  async getProductsByOwner(ownerId) {
+    return productsModel.find({ owner: ownerId });
   }
 }
 

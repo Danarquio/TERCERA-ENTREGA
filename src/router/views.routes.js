@@ -1,9 +1,12 @@
 import { Router } from "express";
-const router = Router()
-
 import ProductManager from "../controllers/ProductManager.js"
 import CartManager from "../controllers/CartManager.js"
 import { isAdmin } from "../config/middlewares.js";
+import { getUsersAndView } from '../controllers/UserController.js';
+import ProductController from "../controllers/ProductController.js";
+
+
+const router = Router()
 
 const product = new ProductManager
 const cart = new CartManager
@@ -101,20 +104,32 @@ router.get("/register", async (req, res) => {
 })
 
 //profile
-router.get("/profile", isAdmin, async (req, res) => { 
+/* router.get("/profile", isAdmin, async (req, res) => { 
     if (!req.session.emailUsuario) {
       return res.redirect("/login");
     }
     res.render("profile", {
       title: "Vista Profile Admin",
-      first_name: req.session.nomUsuario,
-      last_name: req.session.apeUsuario,
-      email: req.session.emailUsuario,
-      rol: req.session.rolUsuario,
-      isAdmin: req.isAdmin // Pasar el indicador isAdmin a la vista profile
+      first_name: req.user.first_name,
+    last_name: req.user.last_name,
+    email: req.user.email,
+    rol: req.user.rol,
+    isAdmin: req.user.rol === 'admin'
     });
-  });
-
+  }); */
+  router.get("/profile", isAuthenticated, async (req, res) => {
+    if (!req.session.emailUsuario) {
+      return res.redirect("/login");
+    }
+    res.render("profile", {
+      title: "Vista Profile Admin",
+      first_name: req.user.first_name,
+      last_name: req.user.last_name,
+      email: req.user.email,
+      rol: req.user.rol,
+      isAdmin: req.user.rol === 'admin'
+    });
+});
 
 //Carga de Productos
 router.get("/addProduct", async (req, res) => {
@@ -124,6 +139,30 @@ router.get("/addProduct", async (req, res) => {
     
 })
 
+
+//Restablecer contraseña
+router.get('/reset', (req, res) => {
+    res.render('reset');
+  });
+
+router.get('/reset-password/:token', (req, res) => {
+    res.render('tokenreset', { token: req.params.token });
+});
+
+
+//todos los usuarios
+router.get('/allusers', getUsersAndView)
+
+//editar los productos
+/* router.get("/manage-products", isAdmin, async (req, res) => {
+    try {
+        const products = await product.getProducts();
+        res.render("manageProducts", { products });
+    } catch (error) {
+        res.status(500).send("Error al obtener productos: " + error.message);
+    }
+}); */
+router.get("/manage-products", isAuthenticated, ProductController.manageProducts)
 
 
 export default router

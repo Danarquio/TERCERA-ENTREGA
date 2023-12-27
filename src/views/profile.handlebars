@@ -9,9 +9,15 @@
 
 
 <!-- Mostrar enlace solo si el usuario es administrador -->
-  {{#if isAdmin}}
+{{#if (or (eq rol 'admin') (eq rol 'premium'))}}
     <a href="/addProduct"><h2>Cargar un nuevo producto</h2></a>
-  {{/if}}
+    <a href="/manage-products"><h2>Modificar Productos</h2></a>
+{{/if}}
+
+<!-- Enlace solo disponible para Admin -->
+{{#if (eq rol 'admin')}}
+    <a href="/allusers"><h2>Todos los usuarios</h2></a>
+{{/if}}
 
 </div>
 

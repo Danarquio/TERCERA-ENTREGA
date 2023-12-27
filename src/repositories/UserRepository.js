@@ -62,6 +62,19 @@ class UserRepository {
   }
 
 
+  //modificar rol de usuario
+  async updateUserRole(userId, newRole) {
+    try {
+        const updatedUser = await usersModel.findByIdAndUpdate(
+            userId, 
+            { rol: newRole },
+            { new: true }
+        );
+        return updatedUser;
+    } catch (error) {
+        throw new Error('Error al actualizar el rol del usuario: ' + error.message);
+    }
+}
 
 }
 

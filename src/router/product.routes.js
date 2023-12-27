@@ -3,6 +3,7 @@ import { productsModel } from "../DAO/models/products.model.js";
 import ProductManager  from "../controllers/ProductManager.js"
 import ProductController from '../controllers/ProductController.js';
 import { isAdmin } from '../config/middlewares.js';
+import { isAdminOrPremium } from '../config/middlewares.js';
 import { manejarError } from "../config/errores.js";
 const router = Router()
 const productManager = new ProductManager()
@@ -10,7 +11,7 @@ const productManager = new ProductManager()
 
 
   //Carga de productos desde el front
-  router.post('/add', isAdmin, ProductController.createProduct);
+  router.post('/add', isAdminOrPremium, ProductController.createProduct);
 
 
 
@@ -104,6 +105,19 @@ router.get("/info", async (req, res) => {
     }
     res.send(await products.getProductsMaster(null,null,category,availability, sortOrder))
 })
+
+
+//modificar productos desde explorador
+router.post('/update/:id', isAdminOrPremium, ProductController.updateProductById);
+
+router.post('/delete/:id', isAdminOrPremium, (req, res) => {
+  if (req.body._method === 'DELETE') {
+      ProductController.deleteProductById(req, res);
+  } else {
+      // Manejar otros casos o devolver un error
+      res.status(400).send('Operación no válida');
+  }
+});
 
 export default router
 

@@ -4,19 +4,27 @@ import { usersModel } from '../DAO/models/users.model.js';
 // Middleware para verificar si el usuario es administrador
 export const isAdmin = (req, res, next) => {
     if (req.isAuthenticated() && req.user.rol === 'admin') {
-        req.isAdmin = true;
+        next();
     } else {
-        req.isAdmin = false;
+        res.redirect('/login');
     }
-    next();
 };
+
+export const isAdminOrPremium = (req, res, next) => {
+    if (req.isAuthenticated() && (req.user.rol === 'admin' || req.user.rol === 'premium')) {
+        next();
+    } else {
+        res.redirect('/login');
+    }
+};
+
 
 // Middleware para verificar si el usuario está autenticado
 export const isAuthenticated = (req, res, next) => {
     if (req.isAuthenticated()) {
         next();
     } else {
-        res.status(401).json({ error: 'Acceso no autorizado. Debes iniciar sesión.' });
+        res.redirect('/login');
     }
 };
 

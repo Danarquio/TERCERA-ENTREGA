@@ -1,10 +1,11 @@
-# TERCERA ENTREGA
-## Servidor Express con Node, Handlebars y persistencia de datos en MongoDB con login de usuario incorporado
-Este proyecto es una aplicación en Node.js que gestiona productos y carritos de compras. Permite agregar, actualizar, eliminar y consultar productos y carritos de compra. Además, utiliza Handlebars para renderizar las vistas tanto de la lista de productos y detalle del producto como el carrito con los productos agregados. Para poder acceder a las funcionalidades de ver y gestionar productos, debes pasar un login de usuario, registrarte primeramente y luego validar los datos al ingresar, el proceso de registro hace que el usuario se guarde en nuestra base de datos en MongoDb de manera codificada con la constraseña encriptada.
+# TERCERA INTEGRACION
+## Servidor Express con Node, Handlebars y persistencia de datos en MongoDB, login de usuario con diversos roles y capacidad de modificar y eliminar productos de la base de datos
+Este proyecto es una aplicación en Node.js que gestiona productos y carritos de compras, con funcionalidades avanzadas de gestión de usuarios y productos. Utiliza Handlebars para renderizar vistas, MongoDB para la persistencia de datos y cuenta con un sistema de autenticación y autorización para diferentes roles de usuario.
 
-En la anterior actualizacion, modificamos la distribucion de los archivos, carpetas y funciones para cumplir con los parametros de arquitectura por capas utilizando DAO, router y controller. Se agrega tambien un archivo .env donde se encuentran las credenciales para acceder a la base de datos, tambien se separo la logica de acceso al session y a la db ubicado ahora en la carpeta config.
-
-Ahora en esta nueva implementacion, agregamos la funcion de mostrar secciones de la aplicacion, identificando al usuario logueado. Impidiendo por ejemplo que otro usuario que no sea admin pueda cargar un producto, o que un usuario no logueado pueda enviar un mensaje.
+Novedades en Esta Versión
+Autenticación y Autorización de Usuario: Sistema mejorado que permite diferentes niveles de acceso y funcionalidades según el rol del usuario (admin, premium, user).
+Gestión de Productos Mejorada: Los usuarios admin pueden agregar, modificar y eliminar productos. Los usuarios premium pueden agregar productos y ver solo aquellos que ellos han cargado.
+Visualización Dinámica de Contenido: Según el rol del usuario, se muestran diferentes secciones y funcionalidades en la aplicación.
 
 ## Instalación
 
@@ -259,3 +260,5 @@ Tercera Entrega/
 ![Captura de Pantalla 5](/src/public/files/Capturadepantalla5.png) 
 ![Captura de Pantalla 6](/src/public/files/Capturadepantalla6.png)
 ![Captura de Pantalla 7](/src/public/files/Capturadepantalla7.png)
+![Captura de Pantalla 8](/src/public/files/Capturadepantalla8.png)
+![Captura de Pantalla 9](/src/public/files/Capturadepantalla9.png)

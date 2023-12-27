@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
     email: String,
     age: Number,
     password: String,
-    rol: String
+    rol: { type: String, enum: ['user', 'admin', 'premium'], default: 'user' }
 })
 
 export const usersModel = mongoose.model(usersCollection, userSchema)
