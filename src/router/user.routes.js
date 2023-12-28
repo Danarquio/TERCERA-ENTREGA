@@ -24,30 +24,30 @@ router.get("/failregister",async(req,res)=>{
 
 
 
-router.post("/login", passport.authenticate("login", {failureRedirect:"/faillogin"}),async (req, res) => {
-    try 
-    {
-        if(!req.user) return res.status(400).send({status:"error", error: "Credenciales invalidas"})
+router.post("/login", passport.authenticate("login", {failureRedirect:"/faillogin"}), async (req, res) => {
+  try {
+      if (!req.user) {
+          return res.status(400).send({ status: "error", error: "Credenciales invalidas" });
+      }
 
-            if(req.user.rol === 'admin'){
-            req.session.emailUsuario = req.user.email
-            req.session.nomUsuario = req.user.first_name
-            req.session.apeUsuario = req.user.last_name
-            req.session.rolUsuario = req.user.rol
-            res.redirect("/profile")
-        }
-        else{
-            req.session.emailUsuario = req.user.email
-            req.session.rolUsuario = req.user.rol
-            res.redirect("/products")
-        }
-        
-        }
-        catch (error) 
-    {
-        res.status(500).send("Error al acceder al perfil: " + error.message);
-    }
-}) 
+      // Guardar detalles del usuario en la sesión
+      req.session.emailUsuario = req.user.email;
+      req.session.rolUsuario = req.user.rol;
+
+      if (req.user.rol === 'admin' || req.user.rol === 'premium') {
+          // Redirige a los usuarios 'admin' y 'premium' al perfil
+          req.session.nomUsuario = req.user.first_name;
+          req.session.apeUsuario = req.user.last_name;
+          res.redirect("/profile");
+      } else {
+          // Redirige a los otros usuarios a la lista de productos
+          res.redirect("/products");
+      }
+  } catch (error) {
+      res.status(500).send("Error al acceder al perfil: " + error.message);
+  }
+});
+
 
 
 router.get("/faillogin",async(req,res)=>{
