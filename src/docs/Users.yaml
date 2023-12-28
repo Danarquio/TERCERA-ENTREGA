@@ -1,0 +1,17 @@
+paths:
+  /api/users/:
+    get:
+      summary: Obtiene todos los usuarios
+      tags:
+        - Users
+      responses:
+        "200":
+          description: "Datos obtenidos satisfactoriamente"
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#components/schemas/User"
+        "500":
+          desctiption: "Error interno del servidor"

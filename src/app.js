@@ -14,6 +14,10 @@ import userRouter from './router/user.routes.js';
 import messagesRouter from "./router/messages.routes.js"
 import Chance from 'chance';
 
+import swaggerJSDoc from 'swagger-jsdoc';
+import SwaggerUiExpress from 'swagger-ui-express';
+
+
 import Handlebars from 'handlebars';
 import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access';
 
@@ -23,6 +27,21 @@ dotenv.config();
 
 // Inicializar la aplicación de Express
 const app = express();
+
+const swaggerOptions = {
+  definition:{
+    openapi: "3.0.1",
+    info:{
+      title: "Documentacion de Api",
+      description: "Api clase Swagger"
+    },
+  },
+  apis:["src/docs/Users.yaml"]
+}
+
+const specs = swaggerJSDoc(swaggerOptions)
+app.use("/apidocs", SwaggerUiExpress.serve, SwaggerUiExpress.setup(specs))
+
 
 // Define tus helpers personalizados
 const customHandlebarsHelpers = {
