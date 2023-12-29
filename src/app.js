@@ -36,11 +36,11 @@ const swaggerOptions = {
       description: "Api clase Swagger"
     },
   },
-  apis:["src/docs/Users.yaml"]
+  apis:["src/docs/Documentacion.yaml"]
 }
 
-const specs = swaggerJSDoc(swaggerOptions)
-app.use("/apidocs", SwaggerUiExpress.serve, SwaggerUiExpress.setup(specs))
+const swaggerSpecs = swaggerJSDoc(swaggerOptions)
+app.use("/apidocs", SwaggerUiExpress.serve, SwaggerUiExpress.setup(swaggerSpecs))
 
 
 // Define tus helpers personalizados
