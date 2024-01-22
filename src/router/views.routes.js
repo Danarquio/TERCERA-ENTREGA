@@ -104,20 +104,7 @@ router.get("/register", async (req, res) => {
 })
 
 //profile
-/* router.get("/profile", isAdmin, async (req, res) => { 
-    if (!req.session.emailUsuario) {
-      return res.redirect("/login");
-    }
-    res.render("profile", {
-      title: "Vista Profile Admin",
-      first_name: req.user.first_name,
-    last_name: req.user.last_name,
-    email: req.user.email,
-    rol: req.user.rol,
-    isAdmin: req.user.rol === 'admin'
-    });
-  }); */
-  router.get("/profile", isAuthenticated, async (req, res) => {
+router.get("/profile", isAuthenticated, async (req, res) => {
     if (!req.session.emailUsuario) {
       return res.redirect("/login");
     }

@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import passport from 'passport';
 import * as userController from '../controllers/UserController.js';
+import UserRepository from '../repositories/UserRepository.js'
+const userRepository = new UserRepository()
 
 const router = Router()
 
@@ -56,14 +58,17 @@ router.get("/faillogin",async(req,res)=>{
 
 
 router.get("/logout", async (req, res) => {
-    req.session.destroy((error) =>{
-        if(error)
-        {
-            return res.json({ status: 'Logout Error', body: error})
-        }
-        res.redirect('/login')
-    })    
-})
+  if(req.user) {
+    // Actualizar la última conexión del usuario
+    await userRepository.updateUser(req.user._id, { last_connection: new Date() });
+  }
+  req.session.destroy((error) => {
+    if(error) {
+      return res.json({ status: 'Logout Error', body: error });
+    }
+    res.redirect('/login');
+  });
+});
 
 
 //------------------------------ GITHUB
@@ -116,7 +121,13 @@ router.get('/users/:uid', userController.getUserById);
 router.post('/request-password-reset', userController.requestPasswordReset);
 router.post('/reset-password/:token', userController.resetPassword);
 
-//cambiar rol de usuario
+//cambiar rol de usuario desde el admin
 router.post('/change-role/:userId', userController.changeUserRole);
+
+//cambiar a premium
+router.put('/premium/:uid', userController.updateToPremium);
+
+//subir documentos (multer)
+router.post('/:uid/documents', upload.array('documents'), userController.uploadDocuments);
 
 export default router;

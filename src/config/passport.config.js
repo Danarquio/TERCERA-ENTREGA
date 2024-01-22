@@ -1,7 +1,7 @@
 import passport from 'passport'
 import GithubStrategy from "passport-github2"
 import local from 'passport-local'
-import {createHash, isValidPassword } from '../utils.js'
+import { createHash, isValidPassword } from '../utils.js'
 import { usersModel } from '../DAO/models/users.model.js'
 import { loginUser } from '../controllers/UserController.js'
 import UserRepository from '../repositories/UserRepository.js'
@@ -26,26 +26,26 @@ const initializePassword = () => {
 
 
                 const hashedPassword = await createHash(password);
-      
-            const newUser = {
-              first_name,
-              last_name,
-              email,
-              age,
-              password: hashedPassword,
-              rol
-            };
-      
-            let result = await userRepository.createUser(newUser);
 
-            return done(null, result);
-          } catch (error) {
-            return done("Error al obtener el usuario" + error);
+                const newUser = {
+                    first_name,
+                    last_name,
+                    email,
+                    age,
+                    password: hashedPassword,
+                    rol
+                };
+
+                let result = await userRepository.createUser(newUser);
+
+                return done(null, result);
+            } catch (error) {
+                return done("Error al obtener el usuario" + error);
 
             }
         }
     ));
-    
+
 
 
     passport.serializeUser((user, done) => {
@@ -68,23 +68,27 @@ const initializePassword = () => {
     passport.use('login', new LocalStrategy({ usernameField: 'email' }, async (username, password, done) => {
         try {
             const user = await usersModel.findOne({ email: username });
-    
+
             if (!user) {
                 return done(null, false, { message: 'Usuario no encontrado' });
             }
-    
+
             const isValid = await isValidPassword(password, user.password);
-    
+
             if (!isValid) {
                 return done(null, false, { message: 'Contraseña incorrecta' });
             }
-    
+
+            // Actualizar la última conexión
+            user.last_connection = new Date();
+            await user.save();
+
             return done(null, user);
         } catch (error) {
             return done(error);
         }
     }));
-    
+
 
     passport.use("github", new GithubStrategy({
         clientID: "Iv1.10a217b7a536d867",
