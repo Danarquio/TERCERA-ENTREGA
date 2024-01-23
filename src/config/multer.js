@@ -1,26 +1,15 @@
-import multer from "multer";
-import __dirname from "./utils.js";
-import path from "path";
-
-const destinationPath = path.join(__dirname, "public/uploads");
-
+import multer from 'multer';
+import __dirname from '../utils.js'; // Ajusta la ruta si es necesario
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        let uploadFolder = "documents";
-        if (file.mimetype.includes("image")) {
-            uploadFolder = "images";
-        }
-        const finalPath = path.join(destinationPath, uploadFolder);
-        cb(null, finalPath);
+        const uploadPath = __dirname + '/public/files'; // Asegúrate de que la ruta es correcta
+        cb(null, uploadPath);
     },
-    filename: (req, file, cb) => {
-        const timestamp = Date.now()
-        const originalName = file.originalname
-        cb(null, `${timestamp}-${originalName}`)
+    filename: function (req, file, cb) {
+        cb(null, `${Date.now()}-${file.originalname}`);
     }
 });
 
 const uploader = multer({ storage: storage });
-
 export default uploader;

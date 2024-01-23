@@ -142,24 +142,65 @@ export const changeUserRole = async (req, res) => {
 
 //actualizar a usuario premium
 export const updateToPremium = async (req, res) => {
+  console.log("UID recibido:", req.params)
   try {
     const { uid } = req.params;
-    const user = await usersModel.findById(uid);
+    const user = await userRepository.getUserById(uid);
 
+    // Documentos requeridos
     const requiredDocs = ['Identificación', 'Comprobante de domicilio', 'Comprobante de estado de cuenta'];
-    const uploadedDocs = user.documents.map(doc => doc.name);
-    const allDocsUploaded = requiredDocs.every(doc => uploadedDocs.includes(doc));
+
+    // Verifica si cada documento requerido está presente
+    const allDocsUploaded = requiredDocs.every(doc => 
+      user.documents.some(userDoc => userDoc.name === doc)
+    );
 
     if (!allDocsUploaded) {
-      return res.status(400).send('El usuario no ha cargado toda la documentación necesaria.');
+      console.log("Documentos cargados por el usuario:", user.documents);
+  console.log("Documentos requeridos que no se encontraron:", requiredDocs.filter(doc => !user.documents.some(userDoc => userDoc.name === doc)));
+      // Si falta algún documento, no permite el cambio a premium
+      return res.status(400).json({ success: false, message: 'Faltan documentos para ser usuario premium.' });
     }
 
+    // Cambia el rol del usuario a 'premium'
     user.rol = 'premium';
     await user.save();
-    res.send('Usuario actualizado a premium.');
+
+    // Envía una respuesta indicando el éxito de la operación
+    res.json({ success: true, message: 'Usuario actualizado a premium.', user: user });
   } catch (error) {
+    console.error('Error al actualizar el usuario:', error);
     res.status(500).send('Error al actualizar el usuario.');
   }
 };
 
 
+export const uploadDocuments = async (req, res) => {
+  if (!req.files || req.files.length === 0) {
+    return res.status(400).send('No se han subido archivos');
+  }
+
+  try {
+    // Procesa los archivos aquí
+    // req.files es un array de archivos subidos
+    const userId = req.params.uid;
+    const user = await userRepository.getUserById(userId);
+
+    const updatedDocuments = req.files.map(file => {
+      return {
+        name: file.originalname, // O cualquier lógica para obtener el nombre del documento
+        reference: file.path // O la ruta donde se guardó el archivo
+      };
+    });
+
+    // Agrega los documentos actualizados al usuario
+    user.documents.push(...updatedDocuments);
+    await user.save();
+
+    res.redirect('/confirmar-premium')
+    //res.send('Documentos subidos y usuario actualizado');
+  } catch (error) {
+    console.error('Error al subir documentos:', error);
+    res.status(500).send('Error interno del servidor');
+  }
+};

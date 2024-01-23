@@ -2,8 +2,9 @@ import { Router } from 'express';
 import passport from 'passport';
 import * as userController from '../controllers/UserController.js';
 import UserRepository from '../repositories/UserRepository.js'
-const userRepository = new UserRepository()
+import uploader from '../config/multer.js'
 
+const userRepository = new UserRepository()
 const router = Router()
 
 
@@ -128,6 +129,6 @@ router.post('/change-role/:userId', userController.changeUserRole);
 router.put('/premium/:uid', userController.updateToPremium);
 
 //subir documentos (multer)
-router.post('/:uid/documents', upload.array('documents'), userController.uploadDocuments);
+router.post('/:uid/documents', uploader.array('documents'), userController.uploadDocuments);
 
 export default router;

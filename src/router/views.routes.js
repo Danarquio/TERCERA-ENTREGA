@@ -12,7 +12,7 @@ const product = new ProductManager
 const cart = new CartManager
 
 //Pagina inicial
-router.get("/", (req, res)=> {
+router.get("/", (req, res) => {
     res.render("home", {
         title: "Dracarnis Home"
     })
@@ -22,17 +22,17 @@ router.get("/", (req, res)=> {
 // Middleware para verificar la autenticación del usuario
 const isAuthenticated = (req, res, next) => {
     if (req.isAuthenticated()) { // Verifica si el usuario está autenticado
-      return next();
+        return next();
     }
     res.redirect("/login"); // Redirige al usuario a la página de inicio de sesión
-  };
+};
 
 
 //Chat
 router.get("/chat", isAuthenticated, (req, res) => {
-  res.render("chat", {
-    title: "Chat con Mongoose"
-  });
+    res.render("chat", {
+        title: "Chat con Mongoose"
+    });
 });
 
 //Renderizado de productos
@@ -41,7 +41,7 @@ router.get("/products", async (req, res) => {
     allProducts = allProducts.map(product => product.toJSON())
     res.render("productos", {
         title: "Dracarnis | Productos",
-        products : allProducts
+        products: allProducts
     })
 })
 
@@ -66,7 +66,7 @@ router.get("/products/:id", async (req, res) => {
                 thumbnails: productDetails.thumbnails,
                 // Agrega otras propiedades aquí si es necesario
             };
-            
+
             res.render("detail", { product: cleanedProduct });
         } else {
             // Manejo de producto no encontrado
@@ -84,7 +84,7 @@ router.get("/cart/:cid", async (req, res) => {
     let cartWithProducts = await cart.getCartWithProducts(id);
     res.render("cart", {
         title: "Vista Carro",
-        products: cartWithProducts.products, 
+        products: cartWithProducts.products,
     });
 });
 
@@ -93,11 +93,11 @@ router.get("/login", async (req, res) => {
     res.render("login", {
         title: "Vista Login",
     });
-    
+
 })
 
 //register
-router.get("/register", async (req, res) => { 
+router.get("/register", async (req, res) => {
     res.render("register", {
         title: "Vista Register",
     });
@@ -106,15 +106,15 @@ router.get("/register", async (req, res) => {
 //profile
 router.get("/profile", isAuthenticated, async (req, res) => {
     if (!req.session.emailUsuario) {
-      return res.redirect("/login");
+        return res.redirect("/login");
     }
     res.render("profile", {
-      title: "Vista Profile Admin",
-      first_name: req.user.first_name,
-      last_name: req.user.last_name,
-      email: req.user.email,
-      rol: req.user.rol,
-      isAdmin: req.user.rol === 'admin'
+        title: "Vista Profile Admin",
+        first_name: req.user.first_name,
+        last_name: req.user.last_name,
+        email: req.user.email,
+        rol: req.user.rol,
+        isAdmin: req.user.rol === 'admin'
     });
 });
 
@@ -123,14 +123,14 @@ router.get("/addProduct", async (req, res) => {
     res.render("addProduct", {
         title: "Carga de Productos",
     });
-    
+
 })
 
 
 //Restablecer contraseña
 router.get('/reset', (req, res) => {
     res.render('reset');
-  });
+});
 
 router.get('/reset-password/:token', (req, res) => {
     res.render('tokenreset', { token: req.params.token });
@@ -141,15 +141,23 @@ router.get('/reset-password/:token', (req, res) => {
 router.get('/allusers', getUsersAndView)
 
 //editar los productos
-/* router.get("/manage-products", isAdmin, async (req, res) => {
-    try {
-        const products = await product.getProducts();
-        res.render("manageProducts", { products });
-    } catch (error) {
-        res.status(500).send("Error al obtener productos: " + error.message);
-    }
-}); */
 router.get("/manage-products", isAuthenticated, ProductController.manageProducts)
+
+//Carga de archivos para ser premium
+router.get('/cambiopremium', isAuthenticated, (req, res) => {
+    res.render('cambioAPremium', {
+        title: "Cambio a Usuario Premium",
+        userId: req.user._id // Asegúrate de que req.user._id está disponible y es correcto
+    });
+});
+
+//Cambiar a premium
+router.get('/confirmar-premium', isAuthenticated, (req, res) => {
+    res.render('confirmarPremium', {
+        userId: req.user._id 
+    });
+});
+
 
 
 export default router
