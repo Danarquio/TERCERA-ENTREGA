@@ -12,4 +12,12 @@ const storage = multer.diskStorage({
 });
 
 const uploader = multer({ storage: storage });
-export default uploader;
+
+
+const upload = uploader.fields([
+    { name: 'identificacion', maxCount: 1 },
+    { name: 'comprobanteDomicilio', maxCount: 1 },
+    { name: 'estadoCuenta', maxCount: 1 }
+  ]);
+  
+  export { upload };

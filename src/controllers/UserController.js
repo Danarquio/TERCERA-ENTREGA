@@ -148,16 +148,19 @@ export const updateToPremium = async (req, res) => {
     const user = await userRepository.getUserById(uid);
 
     // Documentos requeridos
-    const requiredDocs = ['Identificación', 'Comprobante de domicilio', 'Comprobante de estado de cuenta'];
+    const requiredDocs = ['Identificacion', 'Comprobante de domicilio', 'Comprobante de estado de cuenta'];
 
+    const normalizeString = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    
     // Verifica si cada documento requerido está presente
-    const allDocsUploaded = requiredDocs.every(doc => 
-      user.documents.some(userDoc => userDoc.name === doc)
+    const allDocsUploaded = requiredDocs.every(doc =>
+      user.documents.some(userDoc => normalizeString(userDoc.name) === normalizeString(doc))
     );
+
 
     if (!allDocsUploaded) {
       console.log("Documentos cargados por el usuario:", user.documents);
-  console.log("Documentos requeridos que no se encontraron:", requiredDocs.filter(doc => !user.documents.some(userDoc => userDoc.name === doc)));
+      console.log("Documentos requeridos que no se encontraron:", requiredDocs.filter(doc => !user.documents.some(userDoc => userDoc.name === doc)));
       // Si falta algún documento, no permite el cambio a premium
       return res.status(400).json({ success: false, message: 'Faltan documentos para ser usuario premium.' });
     }
@@ -176,31 +179,34 @@ export const updateToPremium = async (req, res) => {
 
 
 export const uploadDocuments = async (req, res) => {
-  if (!req.files || req.files.length === 0) {
+  if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).send('No se han subido archivos');
   }
 
   try {
-    // Procesa los archivos aquí
-    // req.files es un array de archivos subidos
     const userId = req.params.uid;
     const user = await userRepository.getUserById(userId);
 
-    const updatedDocuments = req.files.map(file => {
-      return {
-        name: file.originalname, // O cualquier lógica para obtener el nombre del documento
-        reference: file.path // O la ruta donde se guardó el archivo
-      };
-    });
+    // Renombra los archivos subidos según los campos del formulario
+    const updatedDocuments = [];
+    if (req.files.identificacion) {
+      updatedDocuments.push({ name: 'Identificación', reference: req.files.identificacion[0].path });
+    }
+    if (req.files.comprobanteDomicilio) {
+      updatedDocuments.push({ name: 'Comprobante de domicilio', reference: req.files.comprobanteDomicilio[0].path });
+    }
+    if (req.files.estadoCuenta) {
+      updatedDocuments.push({ name: 'Comprobante de estado de cuenta', reference: req.files.estadoCuenta[0].path });
+    }
 
     // Agrega los documentos actualizados al usuario
     user.documents.push(...updatedDocuments);
     await user.save();
 
-    res.redirect('/confirmar-premium')
-    //res.send('Documentos subidos y usuario actualizado');
+    res.redirect('/confirmar-premium');
   } catch (error) {
     console.error('Error al subir documentos:', error);
     res.status(500).send('Error interno del servidor');
   }
 };
+

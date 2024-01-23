@@ -1,390 +1,75 @@
-openapi: 3.0.0
-info:
-  title: Documentación API Completa
-  description: API para la gestión de carritos, productos y usuarios
-  version: 1.0.0
+# CUARTA PRACTICA INTEGRACION
+## Servidor Express con Node, Handlebars y persistencia de datos en MongoDB, login de usuario con diversos roles y capacidad de modificar y eliminar productos de la base de datos
+Este proyecto es una aplicación en Node.js que gestiona productos y carritos de compras, con funcionalidades avanzadas de gestión de usuarios y productos. Utiliza Handlebars para renderizar vistas, MongoDB para la persistencia de datos y cuenta con un sistema de autenticación y autorización para diferentes roles de usuario.
 
-tags:
-  - name: Carts
-    description: Operaciones de Carritos
-  - name: Products
-    description: Operaciones de Productos
-  - name: Users
-    description: Operaciones de Usuarios
+Novedades en Esta Versión
+En la ultima actualizacion, se incluye en el schema del user las propiedades de "documents" donde se almacenara los archivos cargados por los usuarios, y "last-connection" que almacena en la base de datos la fecha de la ultima vez que el usuario haga login o logout.
 
-paths:
-  # Paths para Carritos
-  /api/carts:
-    get:
-      summary: Obtiene todos los carritos
-      tags:
-        - Carts
-      responses:
-        "200":
-          description: Lista de carritos
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Cart'
-        "500":
-          description: Error interno del servidor
+Tambien se incluye una opcion de validacion para que los usuarios normales de tipo "user" puedan subir su rango a usuario de tipo "premium" que les permita cargar productos al sistema. Este sistema de validacion requiere que el usuario cargue tres documentos: identificacion, comprobante de domicilio y comprobante de estado de cuenta. Una vez cargados estos archivos, el usuario puede actualizar su rol y cambiar a premium
 
-  /api/carts/{id}:
-    get:
-      summary: Obtiene un carrito por ID
-      tags:
-        - Carts
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Detalles del carrito
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Cart'
-        "404":
-          description: Carrito no encontrado
-        "500":
-          description: Error interno del servidor
+## Instalación
 
-    put:
-      summary: Actualiza un carrito
-      tags:
-        - Carts
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Cart'
-      responses:
-        "200":
-          description: Carrito actualizado satisfactoriamente
-        "404":
-          description: Carrito no encontrado
-        "500":
-          description: Error interno del servidor
+1. Clona este repositorio en tu máquina local.
 
-    delete:
-      summary: Elimina un carrito
-      tags:
-        - Carts
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Carrito eliminado satisfactoriamente
-        "404":
-          description: Carrito no encontrado
-        "500":
-          description: Error interno del servidor
+2. Asegúrate de tener Node.js y npm instalados en tu sistema.
 
-components:
-  schemas:
-    Cart:
-      type: object
-      required:
-        - products
-      properties:
-        products:
-          type: array
-          items:
-            $ref: '#/components/schemas/Product'
-    Product:
-      type: object
-      required:
-        - productId
-        - quantity
-      properties:
-        productId:
-          type: string
-        quantity:
-          type: number
+3. Abre una terminal en la ubicación del proyecto y ejecuta los siguientes comandos para instalar las dependencias:
 
-  # Paths para Productos
-  /api/prod:
-    get:
-      summary: Obtiene todos los productos
-      tags:
-        - Products
-      responses:
-        "200":
-          description: Lista de productos
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Product'
-        "500":
-          description: Error interno del servidor
 
-  /api/prod/{id}:
-    get:
-      summary: Obtiene un producto por ID
-      tags:
-        - Products
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Detalles del producto
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Product'
-        "404":
-          description: Producto no encontrado
-        "500":
-          description: Error interno del servidor
 
-  /api/prod/add:
-    post:
-      summary: Agrega un nuevo producto
-      tags:
-        - Products
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Product'
-      responses:
-        "200":
-          description: Producto agregado satisfactoriamente
-        "500":
-          description: Error interno del servidor
+```bash
+    npm install
+    npm i express
+    npm i express-handlebars
+    npm i mongodb
+    npm i mongoose
+    npm i nodemon
+    npm i cookie-parser
+    npm i express-session
+    npm i session-file-store
+    npm i connect-mongo
+    npm i bcrypt
+    npm i passport
+    npm i passport-local
+    npm i passport-github2
+    npm i jsonwebtoken
+    npm i dotenv
+    npm i chance
+    npm i uuid
+    npm i multer
+```
+4. Crea un archivo en la raiz del proyecto llamado .env y agrega tus credenciales para acceder a la base de datos MongoDB siguiendo el esquema presentado debajo y modificando los siguientes segmentos "TU-NOMBRE-DE-USUARIO","TU-PASSWORD", "TU CONTRASEÑA" :
 
-  /api/prod/update/{id}:
-    put:
-      summary: Actualiza un producto existente
-      tags:
-        - Products
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Product'
-      responses:
-        "200":
-          description: Producto actualizado satisfactoriamente
-        "404":
-          description: Producto no encontrado
-        "500":
-          description: Error interno del servidor
 
-  /api/prod/delete/{id}:
-    delete:
-      summary: Elimina un producto
-      tags:
-        - Products
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Producto eliminado satisfactoriamente
-        "404":
-          description: Producto no encontrado
-        "500":
-          description: Error interno del servidor
 
-  # Paths para Usuarios
-  /api/user/register:
-    post:
-      summary: Registra un nuevo usuario
-      tags:
-        - Users
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        "200":
-          description: Usuario registrado satisfactoriamente
-        "400":
-          description: Datos faltantes o inválidos
-        "500":
-          description: Error interno del servidor
+```bash
+   MONGO_URI=mongodb+srv://"TU-NOMBRE-DE-USUARIO":"TU-PASSWORD"@cluster0.xtb0h9o.mongodb.net/"nombre-de-la base-de-datos"?retryWrites=true&w=majority
 
-  /api/user/login:
-    post:
-      summary: Inicia sesión de usuario
-      tags:
-        - Users
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                password:
-                  type: string
-      responses:
-        "200":
-          description: Inicio de sesión exitoso
-        "400":
-          description: Credenciales inválidas
-        "500":
-          description: Error interno del servidor
+   MONGO_TEST=mongodb+srv://"TU-NOMBRE-DE-USUARIO":"TU-PASSWORD"@cluster0.xtb0h9o.mongodb.net/"base-de datos-de-prueba"?retryWrites=true&w=majority
+   
+   SESSION_SECRET="TU CONTRASEÑA"
 
-  /api/user/logout:
-    get:
-      summary: Cierra la sesión del usuario
-      tags:
-        - Users
-      responses:
-        "200":
-          description: Sesión cerrada satisfactoriamente
-        "500":
-          description: Error interno del servidor
+   USERMAILER="CORREO DE MAILER"
+   PASSMAILER="PASSWORD DE MAILER"
 
-  /api/user/users:
-    get:
-      summary: Obtiene todos los usuarios
-      tags:
-        - Users
-      responses:
-        "200":
-          description: Lista de usuarios
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
-        "500":
-          description: Error interno del servidor
+   TWILIO_ACCOUNT_SID="TWILIO"
+   TWILIO_AUTH_TOKEN="TWILIO"
+   TWILIO_SMS_NUMBER="TWILIO"
+   
+   JWT_SECRET="Clave de JWT"  
 
-  /api/user/users/{userId}:
-    get:
-      summary: Obtiene un usuario por ID
-      tags:
-        - Users
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Detalles del usuario
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        "404":
-          description: Usuario no encontrado
-        "500":
-          description: Error interno del servidor
+```
 
-components:
-  schemas:
-    # Schemas para Carritos
-    Cart:
-      type: object
-      required:
-        - products
-      properties:
-        products:
-          type: array
-          items:
-            $ref: '#/components/schemas/Product'
 
-    # Schemas para Productos
-    Product:
-      type: object
-      required:
-        - title
-        - description
-        - price
-        - stock
-        - category
-        - thumbnails
-      properties:
-        title:
-          type: string
-        description:
-          type: string
-        price:
-          type: number
-        stock:
-          type: number
-        category:
-          type: string
-        thumbnails:
-          type: string
-        carru1:
-          type: string
-        carru2:
-          type: string
-        carru3:
-          type: string
-        minimo:
-          type: number
-        availability:
-          type: boolean
+## Uso
 
-    # Schemas para Usuarios
-    User:
-      type: object
-      required:
-        - first_name
-        - last_name
-        - email
-        - age
-        - password
-        - rol
-      properties:
-        first_name:
-          type: string
-        last_name:
-          type: string
-        email:
-          type: string
-        age:
-          type: integer
-        password:
-          type: string
-        rol:
-          type: string
+Inicia la aplicación ejecutando el siguiente comando:
+
+```bash
+    npm start
+```
+La aplicación estará disponible en:
+### `http://localhost:8080`
 
 
 ## Estructura del Proyecto
@@ -395,8 +80,10 @@ Tercera Entrega/
 │   │   ├── db.js
 │   │   ├── errores.js
 │   │   ├── middlewares.js
+│   │   ├── multer.js
 │   │   ├── nodemailer.js
 │   │   ├── session.js
+│   │   ├── token.js
 │   │   ├── twilio.js
 │   │   └── passport.config.js
 │   ├── controllers/
@@ -404,7 +91,6 @@ Tercera Entrega/
 │   │   ├── Productcontroller.js
 │   │   ├── Usercontroller.js
 │   │   ├── CartManager.js
-│   │   ├── multer.js
 │   │   └── ProductManager.js
 │   ├── DAO/
 │   │   ├── classes/
@@ -435,12 +121,17 @@ Tercera Entrega/
 │   ├── views/
 │   │   ├──layaouts/
 │   │   ├── addProduct.handlebars
+│   │   ├── allusers.handlebars
+│   │   ├── cambioAPremium.handlebars
 │   │   ├── cart.handlebars
 │   │   ├── chat.handlebars
+│   │   ├── confirmarPremium.handlebars
 │   │   ├── detail.handlebars
+│   │   ├── emailsent.handlebars
 │   │   ├── faker.handlebars
 │   │   ├── home.handlebars
 │   │   ├── login.handlebars
+│   │   ├── passreset.handlebars
 │   │   ├── productos.handlebars
 │   │   ├── productAdded.handlebars
 │   │   ├── profile.handlebars
